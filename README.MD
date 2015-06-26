@@ -32,7 +32,7 @@ This mode was inspired by the `avy-goto-line` command of [avy-mode](https://gith
 
 Key-leap-mode was the result.
 
-## Contributions
+## Contributing
 
 Bug reports and pull requests are welcome!
 
