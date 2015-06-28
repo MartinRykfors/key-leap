@@ -1,12 +1,12 @@
 # Key-leap-mode
 ## A superb way of leaping between lines
 
-![demo](demo.gif)
-
-Key-leap-mode is a minor mode for Emacs that allows you to quickly jump to any visible line in the current window. When it is active, it will populate the margin of the window with a set of unique three-letter keywords. 
+Key-leap-mode is a minor mode for Emacs that allows you to quickly jump to any visible line in the current window. When the mode is active, it will populate the margin of the buffer's window with a set of unique three-letter keywords. 
 By calling the interactive function `key-leap-start-matching`, you can jump to any visible line by typing the keyword of that line.
 
-It can be enabled in a buffer by calling `key-leap-mode`.
+![demo](demo.gif)
+
+It can be enabled in a buffer by calling `M-x key-leap-mode`.
 
 ## Customization
 
@@ -36,7 +36,12 @@ This mode was inspired by the `avy-goto-line` command of [avy-mode](https://gith
 Key-leap-mode was the result.
 
 ## Contributing
-This is still in the early stages of development, and it has a lot of issues to iron out. Bug reports and pull requests are welcome!
+
+This is still in the early stages of development, and it has a lot of issues to iron out. Bug reports, suggestions and pull requests are welcome!
+
+## Contact
+
+Visit [@rykarn](https://twitter.com/rykarn) if you want to say hi.
 
 ## License
 
