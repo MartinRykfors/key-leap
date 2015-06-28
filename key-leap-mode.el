@@ -258,7 +258,6 @@ respectively."
       (remove-hook 'window-configuration-change-hook 'key-leap--update-current-buffer t)
       (key-leap--clean-current-buffer))))
 
-;;;###autoload
 (provide 'key-leap-mode)
 
 ;;; key-leap-mode.el ends here
