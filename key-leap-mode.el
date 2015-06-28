@@ -244,6 +244,7 @@ respectively."
 (define-minor-mode key-leap-mode
   "A superb way of leaping between lines"
   :lighter nil
+  :keymap (make-sparse-keymap)
   (if key-leap-mode
       (progn
         (add-hook 'after-change-functions 'key-leap--after-change nil t)
