@@ -1,4 +1,4 @@
-;;; key-leap-mode.el
+;;; key-leap.el
 
 ;; Copyright (C) 2015  Martin Rykfors
 
@@ -259,6 +259,6 @@ respectively."
       (remove-hook 'window-configuration-change-hook 'key-leap--update-current-buffer t)
       (key-leap--clean-current-buffer))))
 
-(provide 'key-leap-mode)
+(provide 'key-leap)
 
-;;; key-leap-mode.el ends here
+;;; key-leap.el ends here
