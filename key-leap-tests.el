@@ -30,13 +30,15 @@
 
 (ert-deftest does-thing ()
   "It jumps to the expected lines"
+  (key-leap-set-key-chars '(?h ?g ?t ?c)
+                          '(?a ?o ?e ?u)
+                          '(?h ?t ?n ?s))
   (with-current-buffer test-buffer
     (assert-jumps-to-line 1 "hah")
     (assert-jumps-to-line 2 "hat")
     (assert-jumps-to-line 13 "huh")))
 
-;; (defun test-key-leap ()
-;;   (interactive)
-;;   (load-file (buffer-file-name))
-;;   (ert t))
-
+(defun test-key-leap ()
+  (interactive)
+  (load-file (buffer-file-name))
+  (ert t))

@@ -105,15 +105,16 @@ upper-cased when waiting for the key input."
     ,(/ (mod n (* key-leap--second-count key-leap--third-count)) key-leap--third-count)
     ,(mod n key-leap--third-count)))
 
-(defun key-leap--index-from (keys)
-  (let* ((key-list (string-to-list keys))
-         (c1 (first key-list))
-         (c2 (nth 1 key-list))
-         (c3 (nth 2 key-list))
+(defun key-leap--index-from (key-string)
+  (let* ((char-list (string-to-list key-string))
+         (c1 (first char-list))
+         (c2 (nth 1 char-list))
+         (c3 (nth 2 char-list))
          (v1 (position c1 key-leap--first-chars))
          (v2 (position c2 key-leap--second-chars))
-         (v3 (position c3 key-leap--third-chars)))
-    (+ (* (* key-leap--second-count key-leap--third-count) v1) (* key-leap--third-count v2) v3)))
+         (v3 (position c3 key-leap--third-chars))
+         (coordinates (mapcar* 'position char-list key-leap-key-chars)))
+    (+ (* key-leap--second-count key-leap--third-count v1) (* key-leap--third-count v2) v3)))
 
 (defun key-leap--keys-to-string (keys)
   (let ((k1 (first keys))
@@ -132,6 +133,9 @@ upper-cased when waiting for the key input."
 
 (key-leap--cache-keys)
 
+(defcustom key-leap-key-chars t
+  "Docs go here")
+
 (defun key-leap-set-key-chars (first-chars second-chars third-chars)
   "Set the chars to be used to generate the keys. This function takes
 three list of chars, each list specifying what characters to use for
@@ -140,9 +144,13 @@ respectively."
   (setq key-leap--first-chars first-chars)
   (setq key-leap--second-chars second-chars)
   (setq key-leap--third-chars third-chars)
-  (setq key-leap--first-count (length key-leap--first-chars))
-  (setq key-leap--second-count (length key-leap--second-chars))
-  (setq key-leap--third-count (length key-leap--third-chars))
+  ;; (setq key-leap--first-count (length key-leap--first-chars))
+  ;; (setq key-leap--second-count (length key-leap--second-chars))
+  ;; (setq key-leap--third-count (length key-leap--third-chars))
+  (setq key-leap-key-chars (list first-chars second-chars third-chars))
+  (setq key-leap--first-count (length (nth 0 key-leap-key-chars)))
+  (setq key-leap--second-count (length (nth 1 key-leap-key-chars)))
+  (setq key-leap--third-count (length (nth 2 key-leap-key-chars)))
   (key-leap--cache-keys))
 
 (defvar key-leap--current-key "*")
@@ -216,12 +224,9 @@ respectively."
 
 (defun key-leap--read-keys (char-source-function)
   (setq key-leap--current-key "")
-  (key-leap--update-margin-keys (selected-window))
-  (key-leap--append-char key-leap--first-chars char-source-function)
-  (key-leap--update-margin-keys (selected-window))
-  (key-leap--append-char key-leap--second-chars char-source-function)
-  (key-leap--update-margin-keys (selected-window))
-  (key-leap--append-char key-leap--third-chars char-source-function))
+  (dolist (position-chars key-leap-key-chars)
+    (key-leap--update-margin-keys (selected-window))
+    (key-leap--append-char position-chars char-source-function)))
 
 (defun key-leap-start-matching ()
   "When called, will wait for the user to type the three characters of a key in the margin, and then jump to the corresponding line."
