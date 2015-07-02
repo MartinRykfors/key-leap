@@ -206,13 +206,22 @@ respectively."
   (setq key-leap--current-key "*")
   (key-leap--update-margin-keys (selected-window)))
 
-(defun key-leap--append-char (valid-chars)
-  (let ((input-char (read-char)))
+(defun key-leap--append-char (valid-chars char-source-function)
+  (let ((input-char (funcall char-source-function)))
     (if (member input-char valid-chars)
         (setq key-leap--current-key (concat key-leap--current-key (char-to-string input-char)))
       (progn
         (key-leap--reset-match-state)
         (error "Input char not part of any key")))))
+
+(defun key-leap--read-keys (char-source-function)
+  (setq key-leap--current-key "")
+  (key-leap--update-margin-keys (selected-window))
+  (key-leap--append-char key-leap--first-chars char-source-function)
+  (key-leap--update-margin-keys (selected-window))
+  (key-leap--append-char key-leap--second-chars char-source-function)
+  (key-leap--update-margin-keys (selected-window))
+  (key-leap--append-char key-leap--third-chars char-source-function))
 
 (defun key-leap-start-matching ()
   "When called, will wait for the user to type the three characters of a key in the margin, and then jump to the corresponding line."
@@ -223,13 +232,7 @@ respectively."
           (unless
               (with-local-quit
                 (princ " ")
-                (setq key-leap--current-key "")
-                (key-leap--update-margin-keys (selected-window))
-                (key-leap--append-char key-leap--first-chars)
-                (key-leap--update-margin-keys (selected-window))
-                (key-leap--append-char key-leap--second-chars)
-                (key-leap--update-margin-keys (selected-window))
-                (key-leap--append-char key-leap--third-chars)
+                (key-leap--read-keys 'read-char)
                 (key-leap--leap-to-current-key))
             (key-leap--reset-match-state))
           (key-leap--reset-match-state))
