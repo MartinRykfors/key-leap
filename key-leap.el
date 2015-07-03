@@ -69,6 +69,7 @@
 ;; respectively.
 
 (require 'linum)
+(require 'cl)
 
 (defgroup key-leap nil
   "Leap to any visible line with only three keystrokes.")
@@ -94,24 +95,30 @@ upper-cased when waiting for the key input."
   matched."
   :group 'key-leap)
 
+(defcustom key-leap-key-chars t
+  "Docs go here")
+
 (setq key-leap--first-count (length key-leap--first-chars))
 (setq key-leap--second-count (length key-leap--second-chars))
 (setq key-leap--third-count (length key-leap--third-chars))
 (defvar key-leap-after-leap-hook nil
   "Hook that runs after key-leap-mode has jumped to a new line.")
 
-(defun key-leap--keys (n)
-  `(,(/ n (* key-leap--second-count key-leap--third-count))
-    ,(/ (mod n (* key-leap--second-count key-leap--third-count)) key-leap--third-count)
-    ,(mod n key-leap--third-count)))
+(defun key-leap--tree-size (level)
+  (reduce '* (mapcar 'length key-leap-key-chars) :start level))
+
+(defun key-leap--tree-sizes ()
+  (mapcar 'key-leap--tree-size (number-sequence 1 (length key-leap-key-chars))))
+
+(defun key-leap--chars-from-index (index)
+  `(,(/ index (* key-leap--second-count key-leap--third-count))
+    ,(/ (mod index (* key-leap--second-count key-leap--third-count)) key-leap--third-count)
+    ,(mod index key-leap--third-count)))
 
 (defun key-leap--index-from (key-string)
   (let* ((char-list (string-to-list key-string))
-         (coordinates (mapcar* 'position char-list key-leap-key-chars))
-         (v1 (nth 0 coordinates))
-         (v2 (nth 1 coordinates))
-         (v3 (nth 2 coordinates)))
-    (+ (* key-leap--second-count key-leap--third-count v1) (* key-leap--third-count v2) v3)))
+         (coordinates (mapcar* 'position char-list key-leap-key-chars)))
+    (reduce '+ (mapcar* '* (key-leap--tree-sizes) coordinates))))
 
 (defun key-leap--keys-to-string (keys)
   (let ((k1 (first keys))
@@ -124,14 +131,11 @@ upper-cased when waiting for the key input."
 
 (defun key-leap--cache-keys ()
   (setq key-leap--all-keys (apply 'vector (mapcar (lambda (n)
-                                             (key-leap--keys-to-string (key-leap--keys n)))
+                                             (key-leap--keys-to-string (key-leap--chars-from-index n)))
                                            (number-sequence 0 (- (* key-leap--first-count key-leap--second-count key-leap--third-count) 1)))))
   (setq key-leap--num-keys (length key-leap--all-keys)))
 
 (key-leap--cache-keys)
-
-(defcustom key-leap-key-chars t
-  "Docs go here")
 
 (defun key-leap-set-key-chars (first-chars second-chars third-chars)
   "Set the chars to be used to generate the keys. This function takes
