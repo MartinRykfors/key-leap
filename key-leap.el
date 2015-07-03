@@ -107,13 +107,10 @@ upper-cased when waiting for the key input."
 
 (defun key-leap--index-from (key-string)
   (let* ((char-list (string-to-list key-string))
-         (c1 (first char-list))
-         (c2 (nth 1 char-list))
-         (c3 (nth 2 char-list))
-         (v1 (position c1 key-leap--first-chars))
-         (v2 (position c2 key-leap--second-chars))
-         (v3 (position c3 key-leap--third-chars))
-         (coordinates (mapcar* 'position char-list key-leap-key-chars)))
+         (coordinates (mapcar* 'position char-list key-leap-key-chars))
+         (v1 (nth 0 coordinates))
+         (v2 (nth 1 coordinates))
+         (v3 (nth 2 coordinates)))
     (+ (* key-leap--second-count key-leap--third-count v1) (* key-leap--third-count v2) v3)))
 
 (defun key-leap--keys-to-string (keys)
