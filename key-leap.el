@@ -74,10 +74,6 @@
 (defgroup key-leap nil
   "Leap to any visible line with only three keystrokes.")
 
-(setq key-leap--first-chars '(?h ?j ?k ?l ?\;))
-(setq key-leap--second-chars '(?g ?f ?d ?s ?a))
-(setq key-leap--third-chars '(?h ?j ?k ?l ?\;))
-
 (defcustom key-leap-upcase-active t
   "If set to t, key-leap-mode will make active characters of the keys
 upper-cased when waiting for the key input."
@@ -95,12 +91,9 @@ upper-cased when waiting for the key input."
   matched."
   :group 'key-leap)
 
-(defcustom key-leap-key-chars t
+(defcustom key-leap-key-chars '((?h ?j ?k ?l ?\;) (?g ?f ?d ?s ?a) (?h ?j ?k ?l ?\;))
   "Docs go here")
 
-(setq key-leap--first-count (length key-leap--first-chars))
-(setq key-leap--second-count (length key-leap--second-chars))
-(setq key-leap--third-count (length key-leap--third-chars))
 (defvar key-leap-after-leap-hook nil
   "Hook that runs after key-leap-mode has jumped to a new line.")
 
@@ -110,29 +103,26 @@ upper-cased when waiting for the key input."
 (defun key-leap--tree-sizes ()
   (mapcar 'key-leap--tree-size (number-sequence 1 (length key-leap-key-chars))))
 
-(defun key-leap--chars-from-index (index)
-  `(,(/ index (* key-leap--second-count key-leap--third-count))
-    ,(/ (mod index (* key-leap--second-count key-leap--third-count)) key-leap--third-count)
-    ,(mod index key-leap--third-count)))
+(defun key-leap--coords-from-index (index)
+  (mapcar (lambda (level)
+            (/ (mod index (key-leap--tree-size (- level 1))) (key-leap--tree-size level)))
+          (number-sequence 1 (length key-leap-key-chars))))
 
-(defun key-leap--index-from (key-string)
+(defun key-leap--index-from-key-string (key-string)
   (let* ((char-list (string-to-list key-string))
          (coordinates (mapcar* 'position char-list key-leap-key-chars)))
     (reduce '+ (mapcar* '* (key-leap--tree-sizes) coordinates))))
 
-(defun key-leap--keys-to-string (keys)
-  (let ((k1 (first keys))
-        (k2 (nth 1 keys))
-        (k3 (nth 2 keys)))
-    (string (nth k1 key-leap--first-chars) (nth k2 key-leap--second-chars) (nth k3 key-leap--third-chars))))
+(defun key-leap--coords-to-string (coords)
+  (apply 'string (mapcar* 'nth coords key-leap-key-chars)))
 
 (setq key-leap--all-keys)
 (setq key-leap--num-keys)
 
 (defun key-leap--cache-keys ()
   (setq key-leap--all-keys (apply 'vector (mapcar (lambda (n)
-                                             (key-leap--keys-to-string (key-leap--chars-from-index n)))
-                                           (number-sequence 0 (- (* key-leap--first-count key-leap--second-count key-leap--third-count) 1)))))
+                                             (key-leap--coords-to-string (key-leap--coords-from-index n)))
+                                           (number-sequence 0 (- (key-leap--tree-size 0) 1)))))
   (setq key-leap--num-keys (length key-leap--all-keys)))
 
 (key-leap--cache-keys)
@@ -142,23 +132,14 @@ upper-cased when waiting for the key input."
 three list of chars, each list specifying what characters to use for
 the first, second and third characters of the generated keys
 respectively."
-  (setq key-leap--first-chars first-chars)
-  (setq key-leap--second-chars second-chars)
-  (setq key-leap--third-chars third-chars)
-  ;; (setq key-leap--first-count (length key-leap--first-chars))
-  ;; (setq key-leap--second-count (length key-leap--second-chars))
-  ;; (setq key-leap--third-count (length key-leap--third-chars))
   (setq key-leap-key-chars (list first-chars second-chars third-chars))
-  (setq key-leap--first-count (length (nth 0 key-leap-key-chars)))
-  (setq key-leap--second-count (length (nth 1 key-leap-key-chars)))
-  (setq key-leap--third-count (length (nth 2 key-leap-key-chars)))
   (key-leap--cache-keys))
 
 (defvar key-leap--current-key "*")
 (make-variable-buffer-local 'key-leap--current-key)
 
 (defun key-leap--leap-to-current-key ()
-  (let* ((d (key-leap--index-from key-leap--current-key))
+  (let* ((d (key-leap--index-from-key-string key-leap--current-key))
          (top (line-number-at-pos (window-start))))
     (goto-line (+ d top))
     (run-hooks 'key-leap-after-leap-hook)))
