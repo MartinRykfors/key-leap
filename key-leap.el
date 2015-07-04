@@ -26,25 +26,28 @@
 ;;
 ;; key-leap-mode allows you to quickly jump to any visible line in a
 ;; window. When key-leap-mode is enabled, it will populate the margin
-;; of every line with an unique three-letter keyword. By calling the
+;; of every line with an unique keyword. By calling the
 ;; interactive command `key-leap-start-matching' the keywords become
 ;; active. Typing the keyword of a line in this state will move the
 ;; point to the beginning of that line.
 
-;; key-leap-mode will generate the keywords based on the characters
-;; you provide through the function `key-leap-set-key-chars'.
-;; This function takes three lists of chars as arguments. Each list
-;; should specify the possible first, second and third chars to use
-;; in the keywords, respectively.
+;; You can change the way key-leap-mode generates its keys by setting
+;; the variable `key-leap-key-chars'. This is a list of lists of chars
+;; that specify what chars to use for each position in the keys.
 ;; For example, adding this to your init file
 ;;
-;; (key-leap-set-key-chars '(?h ?t ?n ?s)
-;;                         '(?a ?o ?e ?u)
-;;                         '(?h ?t ?n ?s))
+;; (setq key-leap-key-chars '((?h ?t ?n)
+;;                            (?a ?o)
+;;                            (?h ?t)))
 ;;
-;; will make key-leap generate 64 keys that are easy to type on a
-;; dvorak layout.
-;; It is recommended to use a large enough number of different
+;; will make key-leap-mode generate and use the following keys:
+;; hah hat hoh hot tah tat toh tot nah nat noh not 
+
+;; You are not restricted to just three-letter keywords. By providing
+;; 4 different lists, for instance, key-leap will use 4 letters for
+;; every keyword.
+
+;; You should provide a large enough number of different
 ;; characters for key-leap to use. The number of combinations of
 ;; characters should be bigger than the number of possible visible
 ;; lines for your setup, but not too much bigger than that.
@@ -72,7 +75,7 @@
 (require 'cl)
 
 (defgroup key-leap nil
-  "Leap to any visible line with only three keystrokes.")
+  "Leap to any visible line by typing a keyword.")
 
 (defcustom key-leap-upcase-active t
   "If set to t, key-leap-mode will make active characters of the keys
@@ -92,7 +95,10 @@ upper-cased when waiting for the key input."
   :group 'key-leap)
 
 (defcustom key-leap-key-chars '((?h ?j ?k ?l ?\;) (?g ?f ?d ?s ?a) (?h ?j ?k ?l ?\;))
-  "Docs go here")
+  "A list of lists of chars from which the key-leap keys are
+constructed. The first list specifies the chars to use for the first
+  position of every key and so on."
+  :group 'key-leap)
 
 (defvar key-leap-after-leap-hook nil
   "Hook that runs after key-leap-mode has jumped to a new line.")
@@ -211,7 +217,7 @@ respectively."
     (key-leap--append-char position-chars char-source-function)))
 
 (defun key-leap-start-matching ()
-  "When called, will wait for the user to type the three characters of a key in the margin, and then jump to the corresponding line."
+  "When called, will wait for the user to type the characters of a key in the margin, and then jump to the corresponding line."
   (interactive)
   (let ((inhibit-quit t))
     (if key-leap-mode
@@ -232,7 +238,7 @@ respectively."
 
 ;;;###autoload
 (define-minor-mode key-leap-mode
-  "A superb way of leaping between lines"
+  "Leap between visible lines by typing short keywords."
   :lighter nil
   :keymap (make-sparse-keymap)
   (if key-leap-mode
