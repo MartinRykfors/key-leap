@@ -133,14 +133,6 @@ constructed. The first list specifies the chars to use for the first
 
 (key-leap--cache-keys)
 
-(defun key-leap-set-key-chars (first-chars second-chars third-chars)
-  "Set the chars to be used to generate the keys. This function takes
-three list of chars, each list specifying what characters to use for
-the first, second and third characters of the generated keys
-respectively."
-  (setq key-leap-key-chars (list first-chars second-chars third-chars))
-  (key-leap--cache-keys))
-
 (defvar key-leap--current-key "*")
 (make-variable-buffer-local 'key-leap--current-key)
 
