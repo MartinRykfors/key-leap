@@ -3,7 +3,7 @@
 
 ![demo](demo.gif)
 
-Key-leap-mode is a minor mode for Emacs that allows you to quickly jump to any visible line in the current window. When the mode is active, it will populate the margin of the buffer's window with a set of unique three-letter keywords. 
+Key-leap-mode is a minor mode for Emacs that allows you to quickly jump to any visible line in the current window. When the mode is active, it will populate the margin of the buffer's window with a set of unique keywords. 
 By calling the interactive function `key-leap-start-matching`, you can jump to any visible line by typing the keyword of that line.
 
 It can be enabled in a buffer by calling `M-x key-leap-mode`.
@@ -17,14 +17,15 @@ Key-leap-mode has a key map, but currently it is empty. Add the following to you
 (define-key key-leap-mode-map (kbd "C-c l") 'key-leap-start-matching)
 ```
 
-The function `key-leap-set-key-chars` allows you to specify which characters to use in each of the three positions of the keywords. For instance, adding the following to your config
+The variable `key-leap-key-chars` allows you to specify which characters to use in each position of the keywords. For instance, adding the following to your config
 ```elisp
-(key-leap-set-key-chars '(?h ?t ?n ?s)
-                        '(?a ?o ?e ?u)
-                        '(?h ?t ?n ?s))
+(setq key-leap-key-chars '(?h ?t ?n ?s)
+                         '(?a ?o ?e ?u)
+                         '(?h ?t ?n ?s))
 ```
 will make key-leap-mode generate 64 keys that are easy to type on a dvorak layout.
-By default, it will generate 125 keys from the letters of the home-row of a qwerty layout.
+This variable should always be set to a list of lists of characters. The first list specifies what characters to use for the first position of the keywords. The second list specifies the characters for the second positon, and so on. The keywords will be as long as the number of lists that you specify with this variable.
+By default, it will generate 125 three-letter keys from the letters of the home-row of a qwerty layout.
 
 It is recommended to use a suitably large number of different characters for key-leap to use. The number of combinations of characters should be bigger than the number of possible visible lines for your setup, but not too much bigger than that. 
 
