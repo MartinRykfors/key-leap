@@ -155,7 +155,7 @@ respectively."
 
 (defun key-leap--update-margin-keys (win)
   (remove-overlays (point-min) (point-max) 'window win)
-  (set-window-margins win 3)
+  (set-window-margins win (length key-leap-key-chars))
   (let ((start (line-number-at-pos (window-start win))) (limit (- key-leap--num-keys 1)))
     (save-excursion
       (goto-char (point-min))
