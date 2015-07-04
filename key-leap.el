@@ -237,6 +237,7 @@ respectively."
   :keymap (make-sparse-keymap)
   (if key-leap-mode
       (progn
+        (key-leap--cache-keys)
         (add-hook 'after-change-functions 'key-leap--after-change nil t)
         (add-hook 'window-scroll-functions 'key-leap--window-scrolled nil t)
         (add-hook 'change-major-mode-hook 'key-leap--clean-current-buffer nil t)
