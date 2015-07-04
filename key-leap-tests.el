@@ -33,9 +33,9 @@ Will enter the key as specified in the var input-key"
 
 (ert-deftest leaping-tests ()
   "It leaps to the expected lines"
-  (key-leap-set-key-chars '(?h ?g ?t ?c)
-                          '(?a ?o ?e ?u)
-                          '(?h ?t ?n ?s))
+  (setq key-leap-key-chars '((?h ?g ?t ?c)
+                             (?a ?o ?e ?u)
+                             (?h ?t ?n ?s)))
   (assert-jumps-to-line 1 "hah")
   (assert-jumps-to-line 2 "hat")
   (assert-jumps-to-line 13 "huh"))
@@ -62,9 +62,9 @@ Will enter the key as specified in the var input-key"
 
 (ert-deftest overlay-tests ()
   "It inserts the expected overlays at each line"
-  (key-leap-set-key-chars '(?h ?g ?t ?c)
-                          '(?a ?o ?e ?u)
-                          '(?h ?t ?n ?s))
+  (setq key-leap-key-chars '((?h ?g ?t ?c)
+                             (?a ?o ?e ?u)
+                             (?h ?t ?n ?s)))
   (assert-has-margin-text-on-line 1 "hah")
   (assert-has-margin-text-on-line 2 "hat")
   (assert-has-margin-text-on-line 16 "hus")
