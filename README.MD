@@ -31,17 +31,15 @@ The default key sequence for the `key-leap-start-matching` command is `C-c #`. I
 (define-key key-leap-mode-map (kbd "[your keys]") 'key-leap-start-matching)
 ```
 
-The variable `key-leap-key-chars` allows you to specify which characters to use in each position of the keywords. For instance, adding the following to your config
+The variable `key-leap-key-strings` allows you to specify which characters to use in each position of the keywords. For instance, adding the following to your config
 ```elisp
-(setq key-leap-key-chars '(?h ?t ?n ?s)
-                         '(?a ?o ?e ?u)
-                         '(?h ?t ?n ?s))
+(setq key-leap-key-chars '("htns" "aoeu" "htns"))
 ```
 will make key-leap-mode generate 64 keys that are easy to type on a dvorak layout.
-This variable should always be set to a list of lists of characters. The first list specifies what characters to use for the first position of the keywords. The second list specifies the characters for the second positon, and so on. The keywords will be as long as the number of lists that you specify with this variable.
+This variable should always be set to a list of strings. The first string specifies what characters to use for the first position of the keywords. The second string specifies the characters for the second positon, and so on. The keywords will be as long as the number of strings that you specify with this variable.
 By default, it will generate 125 three-letter keys from the letters of the home-row of a qwerty layout.
 
-It is recommended to use a suitably large number of different characters for key-leap to use. The number of combinations of characters should be bigger than the number of possible visible lines for your setup, but not too much bigger than that. 
+You should use a suitably large number of different characters for key-leap to use. The number of combinations of characters should be bigger than the number of possible visible lines for your setup, but not too much bigger than that. 
 
 After leaping to a new line, it will run the hook `key-leap-after-leap-hook`. To make it move the point to the first non-whitespace character of the line after leaping, add the following to your config:
 ```elisp

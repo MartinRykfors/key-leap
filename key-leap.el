@@ -32,19 +32,17 @@
 ;; point to the beginning of that line.
 
 ;; You can change the way key-leap-mode generates its keys by setting
-;; the variable `key-leap-key-chars'. This is a list of lists of chars
+;; the variable `key-leap-key-strings'. This is a list of strings
 ;; that specify what chars to use for each position in the keys.
 ;; For example, adding this to your init file
 ;;
-;; (setq key-leap-key-chars '((?h ?t ?n)
-;;                            (?a ?o)
-;;                            (?h ?t)))
+;; (setq key-leap-key-chars '("htn" "ao" "ht"))
 ;;
 ;; will make key-leap-mode generate and use the following keys:
 ;; hah hat hoh hot tah tat toh tot nah nat noh not 
 
 ;; You are not restricted to just three-letter keywords. By providing
-;; 4 different lists, for instance, key-leap will use 4 letters for
+;; 4 different strings, for instance, key-leap will use 4 letters for
 ;; every keyword.
 
 ;; You should provide a large enough number of different
@@ -94,44 +92,52 @@ upper-cased when waiting for the key input."
   matched."
   :group 'key-leap)
 
-(defcustom key-leap-key-chars '((?h ?j ?k ?l ?\;) (?g ?f ?d ?s ?a) (?h ?j ?k ?l ?\;))
-  "A list of lists of chars from which the key-leap keys are
-constructed. The first list specifies the chars to use for the first
+(defcustom key-leap-key-strings '("hjkl;" "gfdsa" "hjkl;")
+  "A list of strings from which the key-leap keys are
+constructed. The first list specifies the characters to use for the first
   position of every key and so on."
   :group 'key-leap)
+
+(defvar key-leap--key-chars)
 
 (defvar key-leap-after-leap-hook nil
   "Hook that runs after key-leap-mode has jumped to a new line.")
 
 (defun key-leap--tree-size (level)
-  (reduce '* (mapcar 'length key-leap-key-chars) :start level))
+  (reduce '* (mapcar 'length key-leap--key-chars) :start level))
 
 (defun key-leap--tree-sizes ()
-  (mapcar 'key-leap--tree-size (number-sequence 1 (length key-leap-key-chars))))
+  (mapcar 'key-leap--tree-size (number-sequence 1 (length key-leap--key-chars))))
 
 (defun key-leap--coords-from-index (index)
   (mapcar (lambda (level)
             (/ (mod index (key-leap--tree-size (- level 1))) (key-leap--tree-size level)))
-          (number-sequence 1 (length key-leap-key-chars))))
+          (number-sequence 1 (length key-leap--key-chars))))
 
 (defun key-leap--index-from-key-string (key-string)
   (let* ((char-list (string-to-list key-string))
-         (coordinates (mapcar* 'position char-list key-leap-key-chars)))
+         (coordinates (mapcar* 'position char-list key-leap--key-chars)))
     (reduce '+ (mapcar* '* (key-leap--tree-sizes) coordinates))))
 
 (defun key-leap--coords-to-string (coords)
-  (apply 'string (mapcar* 'nth coords key-leap-key-chars)))
+  (apply 'string (mapcar* 'nth coords key-leap--key-chars)))
 
 (setq key-leap--all-keys)
 (setq key-leap--num-keys)
 
+(defun key-leap--listify-string (s)
+  (let ((len (length s)))
+    (mapcar
+     (lambda (n)
+       (string-to-char (substring s n len)))
+     (number-sequence 0 (- len 1)))))
+
 (defun key-leap--cache-keys ()
+  (setq key-leap--key-chars (mapcar 'key-leap--listify-string key-leap-key-strings))
   (setq key-leap--all-keys (apply 'vector (mapcar (lambda (n)
                                              (key-leap--coords-to-string (key-leap--coords-from-index n)))
                                            (number-sequence 0 (- (key-leap--tree-size 0) 1)))))
   (setq key-leap--num-keys (length key-leap--all-keys)))
-
-(key-leap--cache-keys)
 
 (defvar key-leap--current-key "*")
 (make-variable-buffer-local 'key-leap--current-key)
@@ -153,7 +159,7 @@ constructed. The first list specifies the chars to use for the first
 
 (defun key-leap--update-margin-keys (win)
   (remove-overlays (point-min) (point-max) 'window win)
-  (set-window-margins win (length key-leap-key-chars))
+  (set-window-margins win (length key-leap--key-chars))
   (let ((start (line-number-at-pos (window-start win))) (limit (- key-leap--num-keys 1)))
     (save-excursion
       (goto-char (point-min))
@@ -204,7 +210,7 @@ constructed. The first list specifies the chars to use for the first
 
 (defun key-leap--read-keys (char-source-function)
   (setq key-leap--current-key "")
-  (dolist (position-chars key-leap-key-chars)
+  (dolist (position-chars key-leap--key-chars)
     (key-leap--update-margin-keys (selected-window))
     (key-leap--append-char position-chars char-source-function)))
 
