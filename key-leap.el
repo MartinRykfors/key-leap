@@ -76,8 +76,7 @@
   "Leap to any visible line by typing a keyword.")
 
 (defcustom key-leap-upcase-active t
-  "If set to t, key-leap-mode will make active characters of the keys
-upper-cased when waiting for the key input."
+  "If set to t, key-leap-mode will make active characters of the keys upper-cased when waiting for the key input."
   :group 'key-leap
   :type 'boolean)
 
@@ -88,14 +87,11 @@ upper-cased when waiting for the key input."
 
 (defface key-leap-active
   '((t :inherit (linum default) :foreground "#FF0000"))
-  "Face to use for the parts of the keys that are still being
-  matched."
+  "Face to use for the parts of the keys that are still being matched."
   :group 'key-leap)
 
 (defcustom key-leap-key-strings '("hjkl;" "gfdsa" "hjkl;")
-  "A list of strings from which the key-leap keys are
-constructed. The first list specifies the characters to use for the first
-  position of every key and so on."
+  "A list of strings from which the key-leap keys are constructed. The first list specifies the characters to use for the first position of every key and so on."
   :group 'key-leap)
 
 (defvar key-leap--key-chars)
