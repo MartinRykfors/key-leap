@@ -25,12 +25,14 @@ Then add the following to your `init.el`:
 
 ## Customization
 
+### Key bindings
 The default key sequence for the `key-leap-start-matching` command is `C-c #`. If you want a more suitable key sequence, you can create a new binding by adding the following to your config:
 
 ```elisp
 (define-key key-leap-mode-map (kbd "[your keys]") 'key-leap-start-matching)
 ```
 
+### Key word generation
 The variable `key-leap-key-strings` allows you to specify which characters to use in each position of the keywords. For instance, adding the following to your config
 ```elisp
 (setq key-leap-key-chars '("htns" "aoeu" "htns"))
@@ -41,6 +43,7 @@ By default, it will generate 125 three-letter keys from the letters of the home-
 
 You should use a suitably large number of different characters for key-leap to use. The number of combinations of characters should be bigger than the number of possible visible lines for your setup, but not too much bigger than that. 
 
+### Hooks
 After leaping to a new line, it will run the hook `key-leap-after-leap-hook`. To make it move the point to the first non-whitespace character of the line after leaping, add the following to your config:
 ```elisp
 (add-hook 'key-leap-after-leap-hook 'back-to-indentation)
