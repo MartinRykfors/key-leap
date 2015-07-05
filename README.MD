@@ -4,7 +4,7 @@
 ![demo](demo.gif)
 
 Key-leap-mode is a minor mode for Emacs that allows you to quickly jump to any visible line in the current window. When the mode is active, it will populate the margin of the buffer's window with a set of unique keywords. 
-By calling the interactive function `key-leap-start-matching`, you can jump to any visible line by typing the keyword of that line.
+By calling the interactive function `key-leap-start-matching`, or `C-c #`, you can jump to any visible line by typing the keyword of that line.
 
 It can be enabled in a buffer by calling `M-x key-leap-mode`.
 
@@ -25,11 +25,10 @@ Then add the following to your `init.el`:
 
 ## Customization
 
-Key-leap-mode has a key map, but currently it is empty. Add the following to your config to bind a key:
+The default key sequence for the `key-leap-start-matching` command is `C-c #`. If you want a more suitable key sequence, you can create a new binding by adding the following to your config:
 
 ```elisp
-(require 'key-leap-mode)
-(define-key key-leap-mode-map (kbd "C-c l") 'key-leap-start-matching)
+(define-key key-leap-mode-map (kbd "[your keys]") 'key-leap-start-matching)
 ```
 
 The variable `key-leap-key-chars` allows you to specify which characters to use in each position of the keywords. For instance, adding the following to your config

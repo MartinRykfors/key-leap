@@ -232,7 +232,9 @@ constructed. The first list specifies the chars to use for the first
 (define-minor-mode key-leap-mode
   "Leap between visible lines by typing short keywords."
   :lighter nil
-  :keymap (make-sparse-keymap)
+  :keymap (let ((key-map (make-sparse-keymap)))
+            (define-key key-map (kbd "C-c #") 'key-leap-start-matching)
+            key-map)
   (if key-leap-mode
       (progn
         (key-leap--cache-keys)
