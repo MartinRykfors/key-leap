@@ -4,7 +4,7 @@
 ![demo](demo.gif)
 
 Key-leap-mode is a minor mode for Emacs that allows you to quickly jump to any visible line in the current window. When the mode is active, it will populate the margin of the buffer's window with a set of unique keywords. 
-By calling the interactive function `key-leap-start-matching`, or `C-c #`, you can jump to any visible line by typing the keyword of that line.
+By calling the interactive function `key-leap-start-matching` (`C-c #` by default), you can jump to any visible line by typing the keyword of that line.
 
 It can be enabled in a buffer by calling `M-x key-leap-mode`.
 
