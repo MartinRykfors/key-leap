@@ -10,16 +10,16 @@ It can be enabled in a buffer by calling `M-x key-leap-mode`.
 
 ## Installation
 
-Right now, the easiest way of installing this is to clone this repositiory somewhere and tell Emacs where to find the file `key-leap.el`.
+The easiest way of installing this is to clone this repositiory somewhere and tell Emacs where to find the folder containing the file `key-leap.el`.
 
 ```
-~/.emacs.d $ git clone https://github.com/MartinRykfors/key-leap.git
+$ git clone https://github.com/MartinRykfors/key-leap.git
 ```
 
 Then add the following to your `init.el`:
 
 ```elisp
-(add-to-list 'load-path "~/.emacs.d/key-leap")
+(add-to-list 'load-path "path/to/key-leap")
 (require 'key-leap)
 ```
 
