@@ -37,10 +37,15 @@ The default key sequence for the `key-leap-start-matching` command is `C-c #`. I
 ### Key word generation
 The variable `key-leap-key-strings` allows you to specify which characters to use in each position of the keywords. For instance, adding the following to your config
 ```elisp
-(setq key-leap-key-chars '("htns" "aoeu" "htns"))
+(setq key-leap-key-chars '("htn" "ao" "ht"))
 ```
-will make Key-leap generate 64 keys that are easy to type on a dvorak layout.
-This variable should always be set to a list of strings. The first string specifies what characters to use for the first position of the keywords. The second string specifies the characters for the second positon, and so on. The keywords will be as long as the number of strings that you specify with this variable.
+will make Key-leap generate and use these strings as keywords:
+```
+hah hat hoh hot tah tat toh tot nah nat noh not 
+```
+
+`key-leap-key-strings` should always be set to a list of strings. The first string specifies what characters to use for the first position of the keywords. The second string specifies the characters for the second positon, and so on. The keywords will be as long as the number of strings that you specify with this variable.
+
 By default, it will generate 125 three-letter keys from the letters of the home-row of a qwerty layout.
 
 You should use a suitably large number of different characters for Key-leap to use. The number of combinations of characters should be bigger than the number of possible visible lines for your setup, but not too much bigger than that. 
