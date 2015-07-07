@@ -92,7 +92,8 @@
 
 (defcustom key-leap-key-strings '("hjkl;" "gfdsa" "hjkl;")
   "A list of strings from which the key-leap keys are constructed. The first list specifies the characters to use for the first position of every key and so on."
-  :group 'key-leap)
+  :group 'key-leap
+  :type '(repeat string))
 
 (defvar key-leap--key-chars)
 
