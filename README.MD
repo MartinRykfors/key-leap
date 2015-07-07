@@ -6,7 +6,7 @@
 Key-leap is a minor mode for Emacs that allows you to quickly jump to any visible line in the current window. When the mode is active, it will populate the margin of the buffer's window with a set of unique keywords. 
 By calling the interactive function `key-leap-start-matching` (`C-c #` by default), you can jump to any visible line by typing the keyword of that line.
 
-The keywords assigned to lines based on their distance from the top of the window. When scrolling through a buffer, the keys stay in the same position relative to the window.
+The keywords are assigned to lines based on their distance from the top of the window. When scrolling through a buffer, the keys stay in the same position in the window.
 
 Key-leap can be enabled in a buffer by calling `M-x key-leap-mode`.
 
