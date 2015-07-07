@@ -62,12 +62,27 @@ Will enter the key as specified in the var input-key"
        (string-match ".*\"\\([a-z]+\\)\".*" prop-string)
        (should (string= expected-key-string (downcase (match-string 1 prop-string))))))))
 
+;; This will fail unless leaping-tests have been run in the test-buffer
+;; It seems that it will not create overlays in the test buffers unless we first simulate leaping in that buffer, so we have an outcome dependency between these two tests.
 (ert-deftest overlay-tests ()
   "It inserts the expected overlays at each line"
   (assert-has-margin-text-on-line 1 "hah")
   (assert-has-margin-text-on-line 2 "hat")
   (assert-has-margin-text-on-line 16 "hus")
   (assert-has-margin-text-on-line 17 "tah"))
+
+(ert-deftest overlay-at-last-line ()
+  "It has an overline also in the last line of a buffer"
+  (with-current-buffer (buffer-with-n-lines 3)
+    (with-mock
+      (stub window-top => 0)
+      (key-leap-mode 1)
+      ;; for some reason, I need to simulate leaping in a buffer before it gets populated with overlays
+      (setq current-char-index 0)
+      (setq input-key "hah")
+      (key-leap--read-keys 'stub-input-char-source)
+      (key-leap--leap-to-current-key)
+      (should (= 1 (length (overlays-in (point-max) (point-max))))))))
 
 (defun test-key-leap ()
   (interactive)
