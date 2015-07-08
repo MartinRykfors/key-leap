@@ -181,7 +181,6 @@
 
 (defun key-leap--after-change (beg end len)
   (when (or (= beg end)
-            (= end (point-max))
             (string-match "\n" (buffer-substring-no-properties beg end)))
     (key-leap--update-current-buffer)))
 
