@@ -1,3 +1,4 @@
+;;; key-leap.el --- Leap between lines by typing keywords
 ;;; key-leap.el
 
 ;; Copyright (C) 2015  Martin Rykfors
@@ -25,28 +26,28 @@
 ;;; Commentary:
 ;;
 ;; key-leap-mode allows you to quickly jump to any visible line in a
-;; window. When key-leap-mode is enabled, it will populate the margin
-;; of every line with an unique keyword. By calling the
+;; window.  When key-leap-mode is enabled, it will populate the margin
+;; of every line with an unique keyword.  By calling the
 ;; interactive command `key-leap-start-matching' the keywords become
-;; active. Typing the keyword of a line in this state will move the
+;; active.  Typing the keyword of a line in this state will move the
 ;; point to the beginning of that line.
 
 ;; You can change the way key-leap-mode generates its keys by setting
-;; the variable `key-leap-key-strings'. This is a list of strings
+;; the variable `key-leap-key-strings'.  This is a list of strings
 ;; that specify what chars to use for each position in the keys.
 ;; For example, adding this to your init file
 ;;
 ;; (setq key-leap-key-chars '("htn" "ao" "ht"))
 ;;
 ;; will make key-leap-mode generate and use the following keys:
-;; hah hat hoh hot tah tat toh tot nah nat noh not 
+;; hah hat hoh hot tah tat toh tot nah nat noh not
 
-;; You are not restricted to just three-letter keywords. By providing
+;; You are not restricted to just three-letter keywords.  By providing
 ;; 4 different strings, for instance, key-leap will use 4 letters for
 ;; every keyword.
 
 ;; You should provide a large enough number of different
-;; characters for key-leap to use. The number of combinations of
+;; characters for key-leap to use.  The number of combinations of
 ;; characters should be bigger than the number of possible visible
 ;; lines for your setup, but not too much bigger than that.
 
@@ -63,7 +64,7 @@
 ;; line after leaping.
 
 ;; When set to nil, `key-leap-upcase-active' will not make the active
-;; parts of the keys upper-cased. The default is t.
+;; parts of the keys upper-cased.  The default is t.
 
 ;; The faces for the active and inactive parts of the keys are
 ;; specified by the faces `key-leap-active' and `key-leap-inactive'
@@ -72,11 +73,13 @@
 (require 'linum)
 (require 'cl)
 
+;;; Code:
+
 (defgroup key-leap nil
   "Leap to any visible line by typing a keyword.")
 
 (defcustom key-leap-upcase-active t
-  "If set to t, key-leap-mode will make active characters of the keys upper-cased when waiting for the key input."
+  "If set to t, `key-leap-mode' will make active characters of the keys upper-cased when waiting for the key input."
   :group 'key-leap
   :type 'boolean)
 
@@ -91,14 +94,14 @@
   :group 'key-leap)
 
 (defcustom key-leap-key-strings '("hjkl;" "gfdsa" "hjkl;")
-  "A list of strings from which the key-leap keys are constructed. The first list specifies the characters to use for the first position of every key and so on."
+  "A list of strings from which the key-leap keys are constructed.  The first list specifies the characters to use for the first position of every key and so on."
   :group 'key-leap
   :type '(repeat string))
 
 (defvar key-leap--key-chars)
 
 (defvar key-leap-after-leap-hook nil
-  "Hook that runs after key-leap-mode has jumped to a new line.")
+  "Hook that runs after `key-leap-mode' has jumped to a new line.")
 
 (defun key-leap--tree-size (level)
   (reduce '* (mapcar 'length key-leap--key-chars) :start level))
@@ -229,7 +232,7 @@
                 (key-leap--leap-to-current-key))
             (key-leap--reset-match-state))
           (key-leap--reset-match-state))
-      (error "key-leap-mode not enabled in this buffer"))))
+      (error "Key-leap-mode not enabled in this buffer"))))
 
 (defun key-leap--clean-current-buffer ()
   (dolist (win (get-buffer-window-list (current-buffer) nil t))
