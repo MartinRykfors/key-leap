@@ -4,7 +4,7 @@
 ;; Copyright (C) 2015  Martin Rykfors
 
 ;; Author: Martin Rykfors <martinrykfors@gmail.com> @rykarn
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: point, location
 
@@ -81,27 +81,34 @@
 (defcustom key-leap-upcase-active t
   "If set to t, `key-leap-mode' will make active characters of the keys upper-cased when waiting for the key input."
   :group 'key-leap
-  :type 'boolean)
+  :type 'boolean
+  :version "0.1.0")
 
 (defface key-leap-inactive
   '((t :inherit (linum default)))
   "Face to use for the inactive parts of the keys."
-  :group 'key-leap)
+  :group 'key-leap
+  :version "0.1.0")
 
 (defface key-leap-active
   '((t :inherit (linum default) :foreground "#FF0000"))
   "Face to use for the parts of the keys that are still being matched."
-  :group 'key-leap)
+  :group 'key-leap
+  :version "0.1.0")
 
 (defcustom key-leap-key-strings '("hjkl;" "gfdsa" "hjkl;")
   "A list of strings from which the key-leap keys are constructed.  The first list specifies the characters to use for the first position of every key and so on."
   :group 'key-leap
-  :type '(repeat string))
+  :type '(repeat string)
+  :version "0.1.0")
 
 (defvar key-leap--key-chars)
 
-(defvar key-leap-after-leap-hook nil
-  "Hook that runs after `key-leap-mode' has jumped to a new line.")
+(defcustom key-leap-after-leap-hook nil
+  "Hook that runs after key-leap-mode has jumped to a new line."
+  :type 'hook
+  :group 'key-leap
+  :version "0.2.0")
 
 (defun key-leap--tree-size (level)
   (reduce '* (mapcar 'length key-leap--key-chars) :start level))
