@@ -260,12 +260,14 @@
         (add-hook 'window-scroll-functions 'key-leap--window-scrolled nil t)
         (add-hook 'change-major-mode-hook 'key-leap--clean-current-buffer nil t)
         (add-hook 'window-configuration-change-hook 'key-leap--update-current-buffer nil t)
+        (add-hook 'post-command-hook 'key-leap--update-current-buffer nil t)
         (key-leap--update-current-buffer))
     (progn
       (remove-hook 'after-change-functions 'key-leap--after-change t)
       (remove-hook 'window-scroll-functions 'key-leap--window-scrolled t)
       (remove-hook 'change-major-mode-hook 'key-leap--clean-current-buffer t)
       (remove-hook 'window-configuration-change-hook 'key-leap--update-current-buffer t)
+      (remove-hook 'post-command-hook 'key-leap--update-current-buffer t)
       (key-leap--clean-current-buffer))))
 
 (provide 'key-leap)
