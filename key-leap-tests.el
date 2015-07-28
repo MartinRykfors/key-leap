@@ -10,6 +10,7 @@
     buffer))
 
 (defvar test-buffer (buffer-with-n-lines 100))
+(defvar small-test-buffer (buffer-with-n-lines 3))
 
 (defvar current-char-index 0)
 (defvar input-key "")
@@ -73,7 +74,7 @@ Will enter the key as specified in the var input-key"
 
 (ert-deftest overlay-at-last-line ()
   "It has an overline also in the last line of a buffer"
-  (with-current-buffer (buffer-with-n-lines 3)
+  (with-current-buffer small-test-buffer
     (with-mock
       (stub window-top => 0)
       (key-leap-mode 1)

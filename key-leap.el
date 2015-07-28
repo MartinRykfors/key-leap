@@ -164,16 +164,24 @@
             (propertize cased-str 'face 'key-leap-active)))
     (propertize str 'face 'key-leap-inactive)))
 
+(defvar key-leap--buffer-overlays nil "List of overlays present in the current buffer")
+(make-variable-buffer-local 'key-leap--buffer-overlays)
+
 (defun key-leap--place-overlay (win key-index)
   (let* ((ol (make-overlay (point) (+ 1 (point))))
          (str (elt key-leap--all-keys key-index))
          (colored-string (key-leap--color-substring str)))
     (overlay-put ol 'window win)
     (overlay-put ol 'before-string
-                 (propertize " " 'display`((margin left-margin) ,colored-string)))))
+                 (propertize " " 'display`((margin left-margin) ,colored-string)))
+    (push ol key-leap--buffer-overlays)))
+
+(defun key-leap--delete-overlays ()
+  (dolist (ol key-leap--buffer-overlays)
+    (delete-overlay ol))
+  (setq key-leap--buffer-overlays nil))
 
 (defun key-leap--update-margin-keys (win)
-  (remove-overlays (point-min) (point-max) 'window win)
   (set-window-margins win (length key-leap--key-chars))
   (let ((start (line-number-at-pos (window-start win)))
         (limit (- key-leap--num-keys 1))
@@ -194,23 +202,27 @@
             (string-match "\n" (buffer-substring-no-properties beg end)))
     (key-leap--update-current-buffer)))
 
-(defun key-leap--window-scrolled (win beg)
-  (with-current-buffer (window-buffer)
-    (when key-leap-mode
-      (key-leap--update-margin-keys win))))
+(defun key-leap--clean-current-buffer ()
+  (dolist (win (get-buffer-window-list (current-buffer) nil t))
+    (remove-overlays (point-min) (point-max) 'window win)
+    (set-window-margins win 0)))
 
 (defun key-leap--update-buffer (buffer)
   (with-current-buffer buffer
     (when key-leap-mode
+      (key-leap--delete-overlays)
       (dolist (win (get-buffer-window-list buffer nil t))
         (key-leap--update-margin-keys win)))))
+
+(defun key-leap--window-scrolled (win beg)
+  (key-leap--update-buffer (window-buffer win)))
 
 (defun key-leap--update-current-buffer ()
   (key-leap--update-buffer (current-buffer)))
 
 (defun key-leap--reset-match-state ()
   (setq key-leap--current-key "*")
-  (key-leap--update-margin-keys (selected-window)))
+  (key-leap--update-current-buffer))
 
 (defun key-leap--append-char (valid-chars char-source-function)
   (let ((input-char (funcall char-source-function)))
@@ -223,7 +235,7 @@
 (defun key-leap--read-keys (char-source-function)
   (setq key-leap--current-key "")
   (dolist (position-chars key-leap--key-chars)
-    (key-leap--update-margin-keys (selected-window))
+    (key-leap--update-current-buffer)
     (key-leap--append-char position-chars char-source-function)))
 
 (defun key-leap-start-matching ()
@@ -240,11 +252,6 @@
             (key-leap--reset-match-state))
           (key-leap--reset-match-state))
       (error "Key-leap-mode not enabled in this buffer"))))
-
-(defun key-leap--clean-current-buffer ()
-  (dolist (win (get-buffer-window-list (current-buffer) nil t))
-    (remove-overlays (point-min) (point-max) 'window win)
-    (set-window-margins win 0)))
 
 ;;;###autoload
 (define-minor-mode key-leap-mode
