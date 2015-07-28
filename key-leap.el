@@ -3,8 +3,8 @@
 
 ;; Copyright (C) 2015  Martin Rykfors
 
-;; Author: Martin Rykfors <martinrykfors@gmail.com> @rykarn
-;; Version: 0.2.0
+;; Author: Martin Rykfors <martinrykfors@gmail.com>
+;; Version: 0.1.0
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: point, location
 
