@@ -195,7 +195,7 @@
     (key-leap--update-current-buffer)))
 
 (defun key-leap--window-scrolled (win beg)
-  (with-current-buffer (window-buffer)
+  (with-current-buffer (window-buffer win)
     (when key-leap-mode
       (key-leap--update-margin-keys win))))
 
