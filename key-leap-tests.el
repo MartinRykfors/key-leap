@@ -45,6 +45,7 @@ Will enter the key as specified in the var input-key"
 
 (defun assert-has-margin-text-on-line (line-num expected-key-string)
   (with-current-buffer test-buffer
+    (temp-buffer-window-show test-buffer)
     (key-leap-mode 1)
     (with-mock
      (stub window-top => 0)
@@ -75,6 +76,7 @@ Will enter the key as specified in the var input-key"
 (ert-deftest overlay-at-last-line ()
   "It has an overline also in the last line of a buffer"
   (with-current-buffer small-test-buffer
+    (temp-buffer-window-show small-test-buffer)
     (with-mock
       (stub window-top => 0)
       (key-leap-mode 1)
