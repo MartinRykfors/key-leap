@@ -150,10 +150,9 @@
 (make-variable-buffer-local 'key-leap--current-key)
 
 (defun key-leap--leap-to-current-key ()
-  (let* ((d (key-leap--index-from-key-string key-leap--current-key))
-         (top (line-number-at-pos (window-start))))
-    (goto-line (+ d top))
-    (run-hooks 'key-leap-after-leap-hook)))
+  (goto-char (window-start))
+  (forward-visible-line (key-leap--index-from-key-string key-leap--current-key))
+  (run-hooks 'key-leap-after-leap-hook))
 
 (defun key-leap--color-substring (str)
   (if (string-match (concat "\\(^" key-leap--current-key "\\)\\(.*\\)") str)
@@ -187,15 +186,14 @@
         (limit (- key-leap--num-keys 1))
         (continue t))
     (save-excursion
-      (goto-char (point-min))
-      (forward-line (1- start))
-      (unless (bolp) (forward-line 1))
+      (goto-char (window-start win))
+      (unless (bolp) (forward-visible-line 1))
       (let ((line (line-number-at-pos)))
         (while (and continue (<= (- line start) limit))
           (key-leap--place-overlay win (- line start))
           (setq line (+ 1 line))
           (when (eobp) (setq continue nil))
-          (forward-line 1))))))
+          (forward-visible-line 1))))))
 
 (defun key-leap--after-change (beg end len)
   (when (or (= beg end)

@@ -43,9 +43,9 @@ Will enter the key as specified in the var input-key"
   (assert-jumps-to-line 2 "hat")
   (assert-jumps-to-line 13 "huh"))
 
-(defun assert-has-margin-text-on-line (line-num expected-key-string)
-  (with-current-buffer test-buffer
-    (temp-buffer-window-show test-buffer)
+(defun assert-has-margin-text-on-line (buffer line-num expected-key-string)
+  (with-current-buffer buffer
+    (temp-buffer-window-show buffer)
     (key-leap-mode 1)
     (with-mock
      (stub window-top => 0)
@@ -68,10 +68,10 @@ Will enter the key as specified in the var input-key"
 ;; It seems that it will not create overlays in the test buffers unless we first simulate leaping in that buffer, so we have an outcome dependency between these two tests.
 (ert-deftest overlay-tests ()
   "It inserts the expected overlays at each line"
-  (assert-has-margin-text-on-line 1 "hah")
-  (assert-has-margin-text-on-line 2 "hat")
-  (assert-has-margin-text-on-line 16 "hus")
-  (assert-has-margin-text-on-line 17 "tah"))
+  (assert-has-margin-text-on-line test-buffer 1 "hah")
+  (assert-has-margin-text-on-line test-buffer 2 "hat")
+  (assert-has-margin-text-on-line test-buffer 16 "hus")
+  (assert-has-margin-text-on-line test-buffer 17 "tah"))
 
 (ert-deftest overlay-at-last-line ()
   "It has an overline also in the last line of a buffer"
