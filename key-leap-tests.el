@@ -15,7 +15,7 @@
 (defvar current-char-index 0)
 (defvar input-key "")
 
-(defun stub-input-char-source ()
+(defun stub-input-char-source (msg)
   "Function for stubbing user input when entering keys. 
 Will enter the key as specified in the var input-key"
   (let ((current-char (string-to-char (substring input-key current-char-index))))

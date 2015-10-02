@@ -225,7 +225,7 @@
   (key-leap--update-current-buffer))
 
 (defun key-leap--append-char (valid-chars char-source-function)
-  (let ((input-char (funcall char-source-function)))
+  (let ((input-char (funcall char-source-function (concat (propertize "Enter key: " 'face 'minibuffer-prompt) key-leap--current-key))))
     (if (member input-char valid-chars)
         (setq key-leap--current-key (concat key-leap--current-key (char-to-string input-char)))
       (progn
@@ -247,7 +247,7 @@
           (unless
               (with-local-quit
                 (princ " ")
-                (key-leap--read-keys 'read-char)
+                (key-leap--read-keys (lambda (msg) (read-char msg)))
                 (key-leap--leap-to-current-key))
             (key-leap--reset-match-state))
           (key-leap--reset-match-state))
