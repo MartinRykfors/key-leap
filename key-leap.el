@@ -244,12 +244,9 @@
   (let ((inhibit-quit t))
     (if key-leap-mode
         (progn
-          (unless
-              (with-local-quit
-                (princ " ")
-                (key-leap--read-keys (lambda (msg) (read-char msg)))
-                (key-leap--leap-to-current-key))
-            (key-leap--reset-match-state))
+          (with-local-quit
+            (key-leap--read-keys (lambda (msg) (read-char msg)))
+            (key-leap--leap-to-current-key))
           (key-leap--reset-match-state))
       (error "Key-leap-mode not enabled in this buffer"))))
 
