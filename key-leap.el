@@ -154,13 +154,14 @@
   (forward-visible-line (key-leap--index-from-key-string key-leap--current-key))
   (run-hooks 'key-leap-after-leap-hook))
 
-(defun key-leap--color-substring (str)
-  (if (string-match (concat "\\(^" key-leap--current-key "\\)\\(.*\\)") str)
-       (concat
-          (propertize (match-string 1 str) 'face 'key-leap-inactive)
-          (let* ((active-str (match-string 2 str))
-                 (cased-str (if key-leap-upcase-active (upcase active-str) active-str)))
-            (propertize cased-str 'face 'key-leap-active)))
+(defun key-leap--color-substring (str use-active-face)
+  (if (and use-active-face
+           (string-match (concat "\\(^" key-leap--current-key "\\)\\(.*\\)") str))
+      (concat
+       (propertize (match-string 1 str) 'face 'key-leap-inactive)
+       (let* ((active-str (match-string 2 str))
+              (cased-str (if key-leap-upcase-active (upcase active-str) active-str)))
+         (propertize cased-str 'face 'key-leap-active)))
     (propertize str 'face 'key-leap-inactive)))
 
 (defvar key-leap--buffer-overlays nil "List of overlays present in the current buffer")
@@ -169,7 +170,7 @@
 (defun key-leap--place-overlay (win key-index)
   (let* ((ol (make-overlay (point) (+ 1 (point))))
          (str (elt key-leap--all-keys key-index))
-         (colored-string (key-leap--color-substring str)))
+         (colored-string (key-leap--color-substring str (eq (selected-window) win))))
     (overlay-put ol 'window win)
     (overlay-put ol 'before-string
                  (propertize " " 'display`((margin left-margin) ,colored-string)))
