@@ -164,22 +164,34 @@
          (propertize cased-str 'face 'key-leap-active)))
     (propertize str 'face 'key-leap-inactive)))
 
-(defvar key-leap--buffer-overlays nil "List of overlays present in the current buffer")
+(defvar key-leap--buffer-overlays nil "List of key-leap overlays visible in the current buffer")
+(defvar key-leap--available-buffer-overlays nil "List of key-leap overlays that can be reused in the current buffer")
 (make-variable-buffer-local 'key-leap--buffer-overlays)
+(make-variable-buffer-local 'key-leap--available-buffer-overlays)
+
+(defun key-leap--get-overlay (beg end)
+  (if key-leap--available-buffer-overlays
+      (let ((overlay-to-move (pop key-leap--available-buffer-overlays)))
+        (move-overlay overlay-to-move beg end)
+        (push overlay-to-move key-leap--buffer-overlays)
+        overlay-to-move)
+    (let ((new-overlay (make-overlay beg end)))
+      (push new-overlay key-leap--buffer-overlays)
+      new-overlay)))
 
 (defun key-leap--place-overlay (win key-index)
-  (let* ((ol (make-overlay (point) (+ 1 (point))))
+  (let* ((ol (key-leap--get-overlay (point) (+ 1 (point))))
          (str (elt key-leap--all-keys key-index))
          (colored-string (key-leap--color-substring str (eq (selected-window) win))))
     (overlay-put ol 'window win)
     (overlay-put ol 'before-string
-                 (propertize " " 'display`((margin left-margin) ,colored-string)))
-    (push ol key-leap--buffer-overlays)))
+                 (propertize " " 'display`((margin left-margin) ,colored-string)))))
 
 (defun key-leap--delete-overlays ()
   (dolist (ol key-leap--buffer-overlays)
-    (delete-overlay ol))
-  (setq key-leap--buffer-overlays nil))
+    (delete-overlay ol)
+    (push ol key-leap--available-buffer-overlays)
+    (pop key-leap--buffer-overlays)))
 
 (defun key-leap--update-margin-keys (win)
   (set-window-margins win (length key-leap--key-chars))
