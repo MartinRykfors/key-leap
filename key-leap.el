@@ -70,6 +70,14 @@
 ;; specified by the faces `key-leap-active' and `key-leap-inactive'
 ;; respectively.
 
+;; Key-leap can be integrated with `evil-mode' by adding the function
+;; `key-leap-create-evil-motion' to your Emacs config.  This creates
+;; an evil motion called `key-leap-evil-motion'.  It works the same
+;; way as `key-leap-start-matching', but it will also work with evil
+;; features like operators, visual state and the jump list.  Please
+;; see the documentation for `key-leap-create-evil-motion' for more
+;; information.
+
 (require 'linum)
 (require 'cl)
 
@@ -105,7 +113,7 @@
 (defvar key-leap--key-chars)
 
 (defcustom key-leap-after-leap-hook nil
-  "Hook that runs after key-leap-mode has jumped to a new line."
+  "Hook that runs after `key-leap-mode' has jumped to a new line."
   :type 'hook
   :group 'key-leap
   :version "0.2.0")
@@ -164,8 +172,8 @@
          (propertize cased-str 'face 'key-leap-active)))
     (propertize str 'face 'key-leap-inactive)))
 
-(defvar key-leap--buffer-overlays nil "List of key-leap overlays visible in the current buffer")
-(defvar key-leap--available-buffer-overlays nil "List of key-leap overlays that can be reused in the current buffer")
+(defvar key-leap--buffer-overlays nil "List of key-leap overlays visible in the current buffer.")
+(defvar key-leap--available-buffer-overlays nil "List of key-leap overlays that can be reused in the current buffer.")
 (make-variable-buffer-local 'key-leap--buffer-overlays)
 (make-variable-buffer-local 'key-leap--available-buffer-overlays)
 
@@ -286,6 +294,22 @@
       (remove-hook 'window-configuration-change-hook 'key-leap--update-current-buffer t)
       (remove-hook 'post-command-hook 'key-leap--update-current-buffer t)
       (key-leap--clean-current-buffer))))
+
+(defun key-leap-create-evil-motion (&optional key)
+  "Use key-leap as an evil motion, bound to KEY.
+This function defines a new evil motion called
+`key-leap-evil-motion' that allows you to use key-leap together
+with evil features like operators, visual state and the jump
+list.  May only be called after key-leap and evil have been
+loaded.  When KEY is omitted, only the motion will be defined and
+no key binding will be created."
+  (evil-define-motion key-leap-evil-motion ()
+    "Motion for moving between lines, similar to `key-leap-start-matching'."
+      :type line
+      :jump t
+      (key-leap-start-matching))
+  (when key
+    (define-key evil-motion-state-map key 'key-leap-evil-motion)))
 
 (provide 'key-leap)
 
