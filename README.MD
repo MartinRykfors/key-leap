@@ -58,6 +58,22 @@ After leaping to a new line, it will run the hook `key-leap-after-leap-hook`. To
 
 For more info on customization, please see the commentary in the file `key-leap-mode.el`, or have a look at Key-leap's customization group by calling `M-x customize-group RET key-leap`.
 
+## Integration with evil-mode
+
+Key-leap's way of jumping between lines can be integrated with evil-mode to be used as a motion. This allows you to compose key-leap with operators to do things like deleting every line between the point and a line with a specific key.
+
+The integration can be enabled by adding the following to your `init.el`:
+
+```elisp
+(key-leap-create-evil-motion (kbd "<SPC>"))
+```
+
+This defines a new evil motion, `key-leap-evil-motion` bound to `<SPC>` in the `evil-motion-state-map`. If the argument to `key-leap-create-evil-motion` is left out, no key binding will be created, only the motion is defined.
+
+This function may only be called once both evil and key-leap have been loaded.
+
+With this setup, you can delete every line between the point and the line with key `hot` by typing `d<SPC>hot`. The motion will also work with evil's visual states, and you will be able to undo leaping by pressing ``` `` ``` for instance.
+
 ## Motivation
 
 This mode was inspired by the `avy-goto-line` command of [avy-mode](https://github.com/abo-abo/avy). I wanted that kind of functionality but with the following differences:
@@ -68,7 +84,7 @@ Key-leap was the result.
 
 ## Contributing
 
-This is still in the early stages of development, and it has a lot of issues to iron out. Bug reports, suggestions and pull requests are welcome!
+Bug reports, suggestions and pull requests are welcome!
 
 ## Contact
 
