@@ -1,41 +1,40 @@
 ;;; key-leap.el --- Leap between lines by typing keywords
-;;; key-leap.el
 
 ;; Copyright (C) 2015  Martin Rykfors
 
 ;; Author: Martin Rykfors <martinrykfors@gmail.com>
-;; Version: 0.2.1
-;; Package-Requires: ((emacs "24.1"))
+;; Version: 0.3.0
+;; URL: https://github.com/MartinRykfors/key-leap
 ;; Keywords: point, location
 
 ;; This file is not part of GNU Emacs.
 
 ;; This file is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
+;; it under the terms of the GNU General Public License as published
+;; by the Free Software Foundation; either version 3, or (at your
+;; option) any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
 
-;; For a full copy of the GNU General Public License
-;; see <http://www.gnu.org/licenses/>.
+;; For a full copy of the GNU General Public License see
+;; <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;
+
 ;; key-leap-mode allows you to quickly jump to any visible line in a
 ;; window.  When key-leap-mode is enabled, it will populate the margin
-;; of every line with an unique keyword.  By calling the
-;; interactive command `key-leap-start-matching' the keywords become
-;; active.  Typing the keyword of a line in this state will move the
-;; point to the beginning of that line.
+;; of every line with an unique keyword.  By calling the interactive
+;; command `key-leap-start-matching' the keywords become active.
+;; Typing the keyword of a line in this state will move the point to
+;; the beginning of that line.
 
 ;; You can change the way key-leap-mode generates its keys by setting
 ;; the variable `key-leap-key-strings'.  This is a list of strings
-;; that specify what chars to use for each position in the keys.
-;; For example, adding this to your init file
+;; that specify what chars to use for each position in the keys.  For
+;; example, adding this to your init file
 ;;
 ;; (setq key-leap-key-chars '("htn" "ao" "ht"))
 ;;
@@ -46,17 +45,18 @@
 ;; 4 different strings, for instance, key-leap will use 4 letters for
 ;; every keyword.
 
-;; You should provide a large enough number of different
-;; characters for key-leap to use.  The number of combinations of
-;; characters should be bigger than the number of possible visible
-;; lines for your setup, but not too much bigger than that.
+;; You should provide a large enough number of different characters
+;; for key-leap to use.  The number of combinations of characters
+;; should be bigger than the number of possible visible lines for your
+;; setup, but not too much bigger than that.
 
 ;; By default, key-leap-mode will generate 125 keywords from the
-;; home-row of a qwerty keyboard layout, in a right-left-right fashion.
+;; home-row of a qwerty keyboard layout, in a right-left-right
+;; fashion.
 
 ;; After leaping to a new line with `key-leap-start-matching', the
-;; hook `key-leap-after-leap-hook' will be run.
-;; Adding the following, for instance
+;; hook `key-leap-after-leap-hook' will be run.  Adding the following,
+;; for instance
 ;;
 ;; (add-hook 'key-leap-after-leap-hook 'back-to-indentation)
 ;;
