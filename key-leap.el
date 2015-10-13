@@ -224,9 +224,11 @@
     (key-leap--update-current-buffer)))
 
 (defun key-leap--clean-current-buffer ()
+  (dolist (ol key-leap--buffer-overlays)
+    (delete-overlay ol))
+  (setq key-leap--buffer-overlays nil)
   (dolist (win (get-buffer-window-list (current-buffer) nil t))
-    (remove-overlays (point-min) (point-max) 'window win)
-    (set-window-margins win 0)))
+    (set-window-margins win 0 (cdr (window-margins win)))))
 
 (defun key-leap--update-buffer (buffer)
   (with-current-buffer buffer
