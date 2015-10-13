@@ -79,12 +79,13 @@
 ;; information.
 
 (require 'linum)
-(require 'cl)
+(require 'cl-lib)
 
 ;;; Code:
 
 (defgroup key-leap nil
-  "Leap to any visible line by typing a keyword.")
+  "Leap to any visible line by typing a keyword."
+  :group 'convenience)
 
 (defcustom key-leap-upcase-active t
   "If set to t, `key-leap-mode' will make active characters of the keys upper-cased when waiting for the key input."
@@ -118,27 +119,51 @@
   :group 'key-leap
   :version "0.2.0")
 
+;;;###autoload
+(define-minor-mode key-leap-mode
+  "Leap between visible lines by typing short keywords."
+  :lighter nil
+  :keymap (let ((key-map (make-sparse-keymap)))
+            (define-key key-map (kbd "C-c #") 'key-leap-start-matching)
+            key-map)
+  (if key-leap-mode
+      (progn
+        (key-leap--cache-keys)
+        (add-hook 'after-change-functions 'key-leap--after-change nil t)
+        (add-hook 'window-scroll-functions 'key-leap--window-scrolled nil t)
+        (add-hook 'change-major-mode-hook 'key-leap--clean-current-buffer nil t)
+        (add-hook 'window-configuration-change-hook 'key-leap--update-current-buffer nil t)
+        (add-hook 'post-command-hook 'key-leap--update-current-buffer nil t)
+        (key-leap--update-current-buffer))
+    (progn
+      (remove-hook 'after-change-functions 'key-leap--after-change t)
+      (remove-hook 'window-scroll-functions 'key-leap--window-scrolled t)
+      (remove-hook 'change-major-mode-hook 'key-leap--clean-current-buffer t)
+      (remove-hook 'window-configuration-change-hook 'key-leap--update-current-buffer t)
+      (remove-hook 'post-command-hook 'key-leap--update-current-buffer t)
+      (key-leap--clean-current-buffer))))
+
 (defun key-leap--tree-size (level)
-  (reduce '* (mapcar 'length key-leap--key-chars) :start level))
+  (cl-reduce '* (cl-mapcar 'length key-leap--key-chars) :start level))
 
 (defun key-leap--tree-sizes ()
-  (mapcar 'key-leap--tree-size (number-sequence 1 (length key-leap--key-chars))))
+  (cl-mapcar 'key-leap--tree-size (number-sequence 1 (length key-leap--key-chars))))
 
 (defun key-leap--coords-from-index (index)
-  (mapcar (lambda (level)
+  (cl-mapcar (lambda (level)
             (/ (mod index (key-leap--tree-size (- level 1))) (key-leap--tree-size level)))
           (number-sequence 1 (length key-leap--key-chars))))
 
 (defun key-leap--index-from-key-string (key-string)
   (let* ((char-list (string-to-list key-string))
-         (coordinates (mapcar* 'position char-list key-leap--key-chars)))
-    (reduce '+ (mapcar* '* (key-leap--tree-sizes) coordinates))))
+         (coordinates (cl-mapcar 'cl-position char-list key-leap--key-chars)))
+    (cl-reduce '+ (cl-mapcar '* (key-leap--tree-sizes) coordinates))))
 
 (defun key-leap--coords-to-string (coords)
-  (apply 'string (mapcar* 'nth coords key-leap--key-chars)))
+  (apply 'string (cl-mapcar 'nth coords key-leap--key-chars)))
 
-(setq key-leap--all-keys)
-(setq key-leap--num-keys)
+(defvar key-leap--all-keys nil)
+(defvar key-leap--num-keys nil)
 
 (defun key-leap--listify-string (s)
   (let ((len (length s)))
@@ -273,30 +298,6 @@
           (key-leap--reset-match-state))
       (error "Key-leap-mode not enabled in this buffer"))))
 
-;;;###autoload
-(define-minor-mode key-leap-mode
-  "Leap between visible lines by typing short keywords."
-  :lighter nil
-  :keymap (let ((key-map (make-sparse-keymap)))
-            (define-key key-map (kbd "C-c #") 'key-leap-start-matching)
-            key-map)
-  (if key-leap-mode
-      (progn
-        (key-leap--cache-keys)
-        (add-hook 'after-change-functions 'key-leap--after-change nil t)
-        (add-hook 'window-scroll-functions 'key-leap--window-scrolled nil t)
-        (add-hook 'change-major-mode-hook 'key-leap--clean-current-buffer nil t)
-        (add-hook 'window-configuration-change-hook 'key-leap--update-current-buffer nil t)
-        (add-hook 'post-command-hook 'key-leap--update-current-buffer nil t)
-        (key-leap--update-current-buffer))
-    (progn
-      (remove-hook 'after-change-functions 'key-leap--after-change t)
-      (remove-hook 'window-scroll-functions 'key-leap--window-scrolled t)
-      (remove-hook 'change-major-mode-hook 'key-leap--clean-current-buffer t)
-      (remove-hook 'window-configuration-change-hook 'key-leap--update-current-buffer t)
-      (remove-hook 'post-command-hook 'key-leap--update-current-buffer t)
-      (key-leap--clean-current-buffer))))
-
 (defun key-leap-create-evil-motion (&optional key)
   "Use key-leap as an evil motion, bound to KEY.
 This function defines a new evil motion called
@@ -305,6 +306,8 @@ with evil features like operators, visual state and the jump
 list.  May only be called after key-leap and evil have been
 loaded.  When KEY is omitted, only the motion will be defined and
 no key binding will be created."
+  (defvar key-leap-evil-motion)
+  (defvar evil-motion-state-map)
   (evil-define-motion key-leap-evil-motion ()
     "Motion for moving between lines, similar to `key-leap-start-matching'."
       :type line
