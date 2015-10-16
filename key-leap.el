@@ -6,6 +6,7 @@
 ;; Version: 0.3.0
 ;; URL: https://github.com/MartinRykfors/key-leap
 ;; Keywords: point, location
+;; Package-Requires: ((emacs "24.3"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -144,35 +145,42 @@
       (key-leap--clean-current-buffer))))
 
 (defun key-leap--tree-size (level)
+  "Return how many nodes are below one node at LEVEL."
   (cl-reduce '* (cl-mapcar 'length key-leap--key-chars) :start level))
 
 (defun key-leap--tree-sizes ()
+  "Return a list of numbers, specifying how many nodes are below each level in the tree."
   (cl-mapcar 'key-leap--tree-size (number-sequence 1 (length key-leap--key-chars))))
 
 (defun key-leap--coords-from-index (index)
+  "Convert INDEX to a list of indices into the strings in `key-leap-key-strings'."
   (cl-mapcar (lambda (level)
             (/ (mod index (key-leap--tree-size (- level 1))) (key-leap--tree-size level)))
           (number-sequence 1 (length key-leap--key-chars))))
 
 (defun key-leap--index-from-key-string (key-string)
+  "Convert KEY-STRING to its corresponding index in the list `key-leap--all-keys'."
   (let* ((char-list (string-to-list key-string))
          (coordinates (cl-mapcar 'cl-position char-list key-leap--key-chars)))
     (cl-reduce '+ (cl-mapcar '* (key-leap--tree-sizes) coordinates))))
 
 (defun key-leap--coords-to-string (coords)
+  "Convert the list COORDS into a key string."
   (apply 'string (cl-mapcar 'nth coords key-leap--key-chars)))
 
 (defvar key-leap--all-keys nil)
 (defvar key-leap--num-keys nil)
 
-(defun key-leap--listify-string (s)
-  (let ((len (length s)))
+(defun key-leap--listify-string (string)
+  "Convert STRING into a list of chars."
+  (let ((len (length string)))
     (mapcar
      (lambda (n)
-       (string-to-char (substring s n len)))
+       (string-to-char (substring string n len)))
      (number-sequence 0 (- len 1)))))
 
 (defun key-leap--cache-keys ()
+  "Convert `key-leap-key-strings' into a vector of keys and store it."
   (setq key-leap--key-chars (mapcar 'key-leap--listify-string key-leap-key-strings))
   (setq key-leap--all-keys (apply 'vector (mapcar (lambda (n)
                                              (key-leap--coords-to-string (key-leap--coords-from-index n)))
@@ -183,11 +191,13 @@
 (make-variable-buffer-local 'key-leap--current-key)
 
 (defun key-leap--leap-to-current-key ()
+  "Move the point to the line given by the current entered key."
   (goto-char (window-start))
   (forward-visible-line (key-leap--index-from-key-string key-leap--current-key))
   (run-hooks 'key-leap-after-leap-hook))
 
 (defun key-leap--color-substring (str use-active-face)
+  "Add properties to key string STR.  When USE-ACTIVE-FACE is t, apply the activation face to it."
   (if (and use-active-face
            (string-match (concat "\\(^" key-leap--current-key "\\)\\(.*\\)") str))
       (concat
@@ -203,6 +213,7 @@
 (make-variable-buffer-local 'key-leap--available-buffer-overlays)
 
 (defun key-leap--get-overlay (beg end)
+  "Return an overlay from BEG to END.  Reuse available when possible."
   (if key-leap--available-buffer-overlays
       (let ((overlay-to-move (pop key-leap--available-buffer-overlays)))
         (move-overlay overlay-to-move beg end)
@@ -213,6 +224,7 @@
       new-overlay)))
 
 (defun key-leap--place-overlay (win key-index)
+  "Place an overlay in WIN for showing a margin text for the key with KEY-INDEX."
   (let* ((ol (key-leap--get-overlay (point) (+ 1 (point))))
          (str (elt key-leap--all-keys key-index))
          (colored-string (key-leap--color-substring str (eq (selected-window) win))))
@@ -221,12 +233,14 @@
                  (propertize " " 'display`((margin left-margin) ,colored-string)))))
 
 (defun key-leap--delete-overlays ()
+  "Delete all visible key-leap overlays in the current buffer."
   (dolist (ol key-leap--buffer-overlays)
     (delete-overlay ol)
     (push ol key-leap--available-buffer-overlays)
     (pop key-leap--buffer-overlays)))
 
 (defun key-leap--update-margin-keys (win)
+  "Populate WIN with new overlays for showing keys in the margin."
   (set-window-margins win (length key-leap--key-chars))
   (let ((start (line-number-at-pos (window-start win)))
         (limit (- key-leap--num-keys 1))
@@ -244,11 +258,13 @@
           (forward-visible-line 1))))))
 
 (defun key-leap--after-change (beg end len)
+  "Run when buffer is changed from BEG to END with length LEN."
   (when (or (= beg end)
             (string-match "\n" (buffer-substring-no-properties beg end)))
     (key-leap--update-current-buffer)))
 
 (defun key-leap--clean-current-buffer ()
+  "Delete all key-leap overlays from the current buffer and reset the margins of all windows showing it."
   (dolist (ol key-leap--buffer-overlays)
     (delete-overlay ol))
   (setq key-leap--buffer-overlays nil)
@@ -256,6 +272,7 @@
     (set-window-margins win 0 (cdr (window-margins win)))))
 
 (defun key-leap--update-buffer (buffer)
+  "Refresh the key-leap overlays in BUFFER."
   (with-current-buffer buffer
     (when key-leap-mode
       (key-leap--delete-overlays)
@@ -263,16 +280,20 @@
         (key-leap--update-margin-keys win)))))
 
 (defun key-leap--window-scrolled (win beg)
+  "Run when WIN is scrolled with its top aligned with BEG."
   (key-leap--update-buffer (window-buffer win)))
 
 (defun key-leap--update-current-buffer ()
+  "Update the overlays of the current buffer."
   (key-leap--update-buffer (current-buffer)))
 
 (defun key-leap--reset-match-state ()
+  "Clear the key input and update the overlays in the current buffer."
   (setq key-leap--current-key "*")
   (key-leap--update-current-buffer))
 
 (defun key-leap--append-char (valid-chars char-source-function)
+  "Read next char from input.  Signal error if the char is not in VALID-CHARS.  Use CHAR-SOURCE-FUNCTION for reading input."
   (let ((input-char (funcall char-source-function (concat (propertize "Enter key: " 'face 'minibuffer-prompt) key-leap--current-key))))
     (if (member input-char valid-chars)
         (setq key-leap--current-key (concat key-leap--current-key (char-to-string input-char)))
@@ -281,13 +302,14 @@
         (error "Input char not part of any key")))))
 
 (defun key-leap--read-keys (char-source-function)
+  "Repeatedly wait for char input from CHAR-SOURCE-FUNCTION until a complete key has been typed."
   (setq key-leap--current-key "")
   (dolist (position-chars key-leap--key-chars)
     (key-leap--update-current-buffer)
     (key-leap--append-char position-chars char-source-function)))
 
 (defun key-leap-start-matching ()
-  "When called, will wait for the user to type the characters of a key in the margin, and then jump to the corresponding line."
+  "Wait for the user to type the characters of a key in the margin, and then jump to the corresponding line."
   (interactive)
   (let ((inhibit-quit t))
     (if key-leap-mode
