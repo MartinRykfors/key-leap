@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015  Martin Rykfors
 
 ;; Author: Martin Rykfors <martinrykfors@gmail.com>
-;; Version: 0.3.0
+;; Version: 0.4.0
 ;; URL: https://github.com/MartinRykfors/key-leap
 ;; Keywords: point, location
 ;; Package-Requires: ((emacs "24.3"))
@@ -115,10 +115,16 @@
 (defvar key-leap--key-chars)
 
 (defcustom key-leap-after-leap-hook nil
-  "Hook that runs after `key-leap-mode' has jumped to a new line."
+  "Hook that runs after `key-leap-start-matching' has jumped to a new line."
   :type 'hook
   :group 'key-leap
   :version "0.2.0")
+
+(defcustom key-leap-before-leap-hook nil
+  "Hook that runs just before `key-leap-start-matching' jumps to a new line."
+  :type 'hook
+  :group 'key-leap
+  :version "0.4.0")
 
 ;;;###autoload
 (define-minor-mode key-leap-mode
@@ -192,6 +198,7 @@
 
 (defun key-leap--leap-to-current-key ()
   "Move the point to the line given by the current entered key."
+  (run-hooks 'key-leap-before-leap-hook)
   (goto-char (window-start))
   (forward-visible-line (key-leap--index-from-key-string key-leap--current-key))
   (run-hooks 'key-leap-after-leap-hook))
