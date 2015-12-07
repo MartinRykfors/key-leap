@@ -55,14 +55,12 @@
 ;; home-row of a qwerty keyboard layout, in a right-left-right
 ;; fashion.
 
-;; After leaping to a new line with `key-leap-start-matching', the
-;; hook `key-leap-after-leap-hook' will be run.  Adding the following,
-;; for instance
+;; When calling `key-leap-start-matching' it will run the hooks
+;; `key-leap-before-leap-hook' and `key-leap-after-leap-hook'. For
+;; instance, to make key-leap-mode move to indentation after leaping,
+;; add the following to your config:
 ;;
 ;; (add-hook 'key-leap-after-leap-hook 'back-to-indentation)
-;;
-;; will move the point to the first non-whitespace character on the
-;; line after leaping.
 
 ;; When set to nil, `key-leap-upcase-active' will not make the active
 ;; parts of the keys upper-cased.  The default is t.

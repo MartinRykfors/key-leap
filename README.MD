@@ -51,7 +51,7 @@ By default, it will generate 125 three-letter keys from the letters of the home-
 You should use a suitably large number of different characters for Key-leap to use. The number of combinations of characters should be bigger than the number of possible visible lines for your setup, but not too much bigger than that. 
 
 ### Hooks
-After leaping to a new line, it will run the hook `key-leap-after-leap-hook`. To make it move the point to the first non-whitespace character of the line after leaping, add the following to your config:
+When calling the interactive command `key-leap-start-matching`, it will run the hooks `key-leap-before-leap-hook` and `key-leap-after-leap-hook`. To make it move the point to the first non-whitespace character of the line after leaping, add the following to your config:
 ```elisp
 (add-hook 'key-leap-after-leap-hook 'back-to-indentation)
 ```
