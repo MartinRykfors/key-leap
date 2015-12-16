@@ -304,7 +304,7 @@
         (setq key-leap--current-key (concat key-leap--current-key (char-to-string input-char)))
       (progn
         (key-leap--reset-match-state)
-        (error "Input char not part of any key")))))
+        (error "Key-leap matching stopped - no such key available")))))
 
 (defun key-leap--read-keys (char-source-function)
   "Repeatedly wait for char input from CHAR-SOURCE-FUNCTION until a complete key has been typed."
