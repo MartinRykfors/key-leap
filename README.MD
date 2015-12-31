@@ -77,8 +77,8 @@ With this setup, you can delete every line between the point and the line with k
 ## Motivation
 
 This mode was inspired by the `avy-goto-line` command of [avy-mode](https://github.com/abo-abo/avy). I wanted that kind of functionality but with the following differences:
-* The keys should be always visible, no overlays appearing in the buffer's contents.
-* There should be more control over in what sequence the characters of the keys appear.
+* The keys should be always visible, so that you are able to read the key and activate the leap command at the same time.
+* You should be able to control the keyword generation so that they can be typed by alternating hands.
 
 Key-leap was the result.
 
