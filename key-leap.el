@@ -5,7 +5,7 @@
 ;; Author: Martin Rykfors <martinrykfors@gmail.com>
 ;; Version: 0.4.0
 ;; URL: https://github.com/MartinRykfors/key-leap
-;; Keywords: point, location
+;; Keywords: point, convenience
 ;; Package-Requires: ((emacs "24.3"))
 
 ;; This file is not part of GNU Emacs.
