@@ -12,7 +12,9 @@ Key-leap can be enabled in a buffer by calling `M-x key-leap-mode`.
 
 ## Installation
 
-The easiest way of installing this is to clone this repositiory somewhere and tell Emacs where to find the folder containing the file `key-leap.el`.
+Assuming you have [set up your config](https://github.com/milkypostman/melpa#usage) to use the MELPA repository, the easiest way of installing key-leap is by doing `M-x package-install RET key-leap RET`.
+
+You can also do a manual install by cloning this repositiory somewhere and telling Emacs where to find the folder containing the file `key-leap.el`.
 
 ```
 $ git clone https://github.com/MartinRykfors/key-leap.git
