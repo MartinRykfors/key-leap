@@ -77,10 +77,10 @@
 ;; see the documentation for `key-leap-create-evil-motion' for more
 ;; information.
 
+;;; Code:
+
 (require 'linum)
 (require 'cl-lib)
-
-;;; Code:
 
 (defgroup key-leap nil
   "Leap to any visible line by typing a keyword."
