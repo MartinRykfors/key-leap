@@ -1,4 +1,6 @@
 # Key-leap
+[![MELPA](https://melpa.org/packages/key-leap-badge.svg)](https://melpa.org/#/key-leap)
+
 ## A superb way of leaping between lines
 
 ![demo](demo.gif)
