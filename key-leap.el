@@ -316,9 +316,11 @@
 (defun key-leap-start-matching ()
   "Wait for the user to type the characters of a key in the margin, and then jump to the corresponding line."
   (interactive)
-  (let ((inhibit-quit t))
+  (let ((inhibit-quit t)
+        (echo-keystrokes 0))
     (if key-leap-mode
         (progn
+          (message "")
           (with-local-quit
             (key-leap--read-keys (lambda (msg) (read-char msg)))
             (key-leap--leap-to-current-key))
