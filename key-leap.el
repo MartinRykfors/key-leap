@@ -191,8 +191,7 @@
                                            (number-sequence 0 (- (key-leap--tree-size 0) 1)))))
   (setq key-leap--num-keys (length key-leap--all-keys)))
 
-(defvar key-leap--current-key "*")
-(make-variable-buffer-local 'key-leap--current-key)
+(defvar-local key-leap--current-key "*")
 
 (defun key-leap--leap-to-current-key ()
   "Move the point to the line given by the current entered key."
@@ -212,10 +211,8 @@
          (propertize cased-str 'face 'key-leap-active)))
     (propertize str 'face 'key-leap-inactive)))
 
-(defvar key-leap--buffer-overlays nil "List of key-leap overlays visible in the current buffer.")
-(defvar key-leap--available-buffer-overlays nil "List of key-leap overlays that can be reused in the current buffer.")
-(make-variable-buffer-local 'key-leap--buffer-overlays)
-(make-variable-buffer-local 'key-leap--available-buffer-overlays)
+(defvar-local key-leap--buffer-overlays nil "List of key-leap overlays visible in the current buffer.")
+(defvar-local key-leap--available-buffer-overlays nil "List of key-leap overlays that can be reused in the current buffer.")
 
 (defun key-leap--get-overlay (beg end)
   "Return an overlay from BEG to END.  Reuse available when possible."
