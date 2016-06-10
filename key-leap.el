@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015  Martin Rykfors
 
 ;; Author: Martin Rykfors <martinrykfors@gmail.com>
-;; Version: 0.4.0
+;; Version: 0.4.1
 ;; URL: https://github.com/MartinRykfors/key-leap
 ;; Keywords: point, convenience
 ;; Package-Requires: ((emacs "24.3"))
@@ -319,8 +319,11 @@
         (progn
           (message "")
           (with-local-quit
-            (key-leap--read-keys (lambda (msg) (read-char msg)))
-            (key-leap--leap-to-current-key))
+            (condition-case nil
+                (progn
+                  (key-leap--read-keys (lambda (msg) (read-char msg)))
+                  (key-leap--leap-to-current-key))
+              (error (key-leap--reset-match-state))))
           (key-leap--reset-match-state))
       (error "Key-leap-mode not enabled in this buffer"))))
 
