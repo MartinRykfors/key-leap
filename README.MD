@@ -41,7 +41,7 @@ The default key sequence for the `key-leap-start-matching` command is `C-c #`. I
 ### Keyword generation
 The variable `key-leap-key-strings` allows you to specify which characters to use in each position of the keywords. For instance, adding the following to your config
 ```elisp
-(setq key-leap-key-chars '("htn" "ao" "ht"))
+(setq key-leap-key-strings '("htn" "ao" "ht"))
 ```
 will make Key-leap generate and use these strings as keywords:
 ```
