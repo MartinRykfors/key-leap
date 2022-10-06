@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015  Martin Rykfors
 
 ;; Author: Martin Rykfors <martinrykfors@gmail.com>
-;; Version: 0.4.1
+;; Version: 1.0.0
 ;; URL: https://github.com/MartinRykfors/key-leap
 ;; Keywords: point, convenience
 ;; Package-Requires: ((emacs "24.3"))
@@ -56,7 +56,7 @@
 ;; fashion.
 
 ;; When calling `key-leap-start-matching' it will run the hooks
-;; `key-leap-before-leap-hook' and `key-leap-after-leap-hook'. For
+;; `key-leap-before-leap-hook' and `key-leap-after-leap-hook'.  For
 ;; instance, to make key-leap-mode move to indentation after leaping,
 ;; add the following to your config:
 ;;
@@ -328,22 +328,14 @@
       (error "Key-leap-mode not enabled in this buffer"))))
 
 (defun key-leap-create-evil-motion (&optional key)
-  "Use key-leap as an evil motion, bound to KEY.
-This function defines a new evil motion called
-`key-leap-evil-motion' that allows you to use key-leap together
-with evil features like operators, visual state and the jump
-list.  May only be called after key-leap and evil have been
-loaded.  When KEY is omitted, only the motion will be defined and
-no key binding will be created."
-  (defvar key-leap-evil-motion)
-  (defvar evil-motion-state-map)
-  (evil-define-motion key-leap-evil-motion ()
-    "Motion for moving between lines, similar to `key-leap-start-matching'."
-      :type line
-      :jump t
-      (key-leap-start-matching))
-  (when key
-    (define-key evil-motion-state-map key 'key-leap-evil-motion)))
+  "Obsolete due to being moved to a separate package.
+This function was used to create an evil motion bound to KEY,
+allowing it to be combined with evil operators to alter text
+between the point and the line jumped to.  Use the function
+`evil-key-leap-create-motion' from the evil-key-leap package
+instead."
+  nil)
+(make-obsolete 'key-leap-create-evil-motion "`evil-key-leap-create-motion' from the evil-key-leap package." "Version 1.0.0")
 
 (provide 'key-leap)
 
